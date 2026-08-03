@@ -62,11 +62,16 @@ OUTPUT_CAPS="video/x-raw,format=${FORMAT},width=${OUTPUT_WIDTH},height=${OUTPUT_
 # Input (-i): the real GC2607 source. relayd appends its own appsink, so this
 # ends at a capsfilter producing exactly the output caps. relayd runs this
 # pipeline only while a consumer holds the loopback open.
+#
+# The final capsfilter must be spelled as an explicit element
+# ("capsfilter caps=..."), not shorthand caps ("! video/x-raw,...").
+# GStreamer 1.28.5 no longer parses a description that ends in shorthand
+# caps (fails with: no element "video"), and relayd parses -i verbatim.
 INPUT_PIPELINE="icamerasrc device-name=gc2607-uf ${AE_PROPS}"
 INPUT_PIPELINE+=" ! video/x-raw,format=NV12,width=${SOURCE_WIDTH},height=${SOURCE_HEIGHT},framerate=${FRAMERATE}"
 INPUT_PIPELINE+=" ! videoflip method=${FLIP_METHOD}"
 INPUT_PIPELINE+=" ! videoconvert ! videoscale ! videorate"
-INPUT_PIPELINE+=" ! ${OUTPUT_CAPS}"
+INPUT_PIPELINE+=" ! capsfilter caps=${OUTPUT_CAPS}"
 
 # Output (-o): relayd's producer side, held open continuously so the node stays
 # discoverable even while the real camera is idle.
@@ -76,7 +81,7 @@ OUTPUT_PIPELINE+=" ! videoconvert ! v4l2sink name=v4l2sink device=${DEVICE} sync
 # Splash (-s): the cheap idle image relayd feeds to the loopback when no real
 # camera is running. This is what keeps the device a valid capture node under
 # exclusive_caps=1 without ever powering the GC2607 sensor.
-SPLASH_PIPELINE="${GC2607_VCAM_SPLASHSRC:-videotestsrc is-live=true pattern=black ! ${OUTPUT_CAPS}}"
+SPLASH_PIPELINE="${GC2607_VCAM_SPLASHSRC:-videotestsrc is-live=true pattern=black ! capsfilter caps=${OUTPUT_CAPS}}"
 
 RELAYD_ARGS=(-i "$INPUT_PIPELINE" -o "$OUTPUT_PIPELINE" -s "$SPLASH_PIPELINE")
 if [[ -n "${GC2607_RELAYD_DEBUG:-}" ]]; then
