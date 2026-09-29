@@ -5,9 +5,9 @@ set -euo pipefail
 #
 #   1. v4l2loopback auto-loads at boot with the right options, so
 #      /dev/video60 ("GC2607 Virtual Camera") exists before the user logs in.
-#   2. A systemd --user service runs the relayd engine
-#      (virtual-camera.sh run): relayd powers the real GC2607 sensor only while
-#      an app is actually using the virtual device, then idles off.
+#   2. A systemd --user service runs the relayd supervisor
+#      (virtual-camera.sh run): relayd powers the real GC2607 sensor while an
+#      app is using the virtual device, then is restarted to release it.
 #   3. The WirePlumber desktop integration is installed so apps prefer the
 #      virtual camera and the raw IPU6 nodes stay hidden.
 #

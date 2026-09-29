@@ -8,9 +8,10 @@ icamerasrc -> v4l2-relayd -> v4l2loopback -> Discord/Telegram/browser
 
 [`v4l2-relayd`](https://gitlab.com/vicamo/v4l2-relayd) is the canonical userspace bridge for the
 IPU6 HAL problem. It owns the `v4l2loopback` device as a producer and powers the real GC2607 source
-**only while a consumer has the loopback open**, using v4l2loopback's `V4L2_EVENT_PRI_CLIENT_USAGE`
-event. The real GC2607/IPU6/HAL pipeline therefore runs only while something actually opens the
-virtual camera — messaging apps can stay open all day with the sensor idle.
+**only while a consumer has the loopback open**. The supervisor also watches loopback users and
+restarts relayd after the last consumer closes, covering relayd/v4l2loopback combinations that do
+not reliably deliver `V4L2_EVENT_PRI_CLIENT_USAGE`. Messaging apps can stay open all day with the
+sensor idle.
 
 ## Prerequisites
 
@@ -56,9 +57,9 @@ The `prepare` step loads `v4l2loopback` and registers PipeWire visibility; it do
 The `start` step launches relayd as a `systemd --user` service. While no app has the virtual camera
 open, relayd feeds the splash image (a cheap black `videotestsrc`) so the node stays discoverable
 under `exclusive_caps=1`. The instant an app opens `GC2607 Virtual Camera`, relayd starts the real
-`icamerasrc` pipeline; when the last consumer closes, it returns to the splash and powers the sensor
-back down. There is no idle-timeout knob any more — start/stop is driven directly by the kernel
-open/close events.
+`icamerasrc` pipeline. When the last consumer closes, the supervisor waits two seconds and restarts
+relayd, returning to the splash and releasing the sensor/HAL buffers. Override the grace period with
+`GC2607_VCAM_IDLE_GRACE` if an application needs a longer handoff window.
 
 ## HAL prefix and the two service models
 
@@ -101,7 +102,7 @@ This is re-runnable and installs three idempotent pieces:
 1. `/etc/modules-load.d` + `/etc/modprobe.d` drop-ins so `v4l2loopback` auto-loads at boot with the
    GC2607 options, making `/dev/video60` exist before you log in (asks for `sudo`).
 2. A `systemd --user` service (`gc2607-camera.service`) that runs `virtual-camera.sh run` on login,
-   ordered after `pipewire`/`wireplumber`.
+   ordered after `pipewire`/`wireplumber`; its supervisor releases the real camera after idle.
 3. The WirePlumber desktop integration (via `install-virtual-camera-desktop.sh`).
 
 This persists the *virtual device and the relayd engine* — not the real camera. relayd keeps

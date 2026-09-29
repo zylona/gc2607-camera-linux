@@ -63,8 +63,9 @@ OUTPUT_CAPS="video/x-raw,format=${FORMAT},width=${OUTPUT_WIDTH},height=${OUTPUT_
 SINK_SYNC="${GC2607_VCAM_SINK_SYNC:-true}"
 
 # Input (-i): the real GC2607 source. relayd appends its own appsink, so this
-# ends at a capsfilter producing exactly the output caps. relayd runs this
-# pipeline only while a consumer holds the loopback open.
+# ends at a capsfilter producing exactly the output caps. The supervisor
+# restarts relayd after a consumer closes if the installed relayd build fails
+# to deliver the loopback client-usage transition.
 #
 # The final capsfilter must be spelled as an explicit element
 # ("capsfilter caps=..."), not shorthand caps ("! video/x-raw,...").

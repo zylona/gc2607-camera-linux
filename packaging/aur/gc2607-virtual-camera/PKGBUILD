@@ -68,6 +68,7 @@ EOF
   install -m755 \
     scripts/check-gc2607-hardware.sh \
     scripts/run-virtual-camera-feeder.sh \
+    scripts/run-virtual-camera-supervisor.sh \
     scripts/virtual-camera.sh \
     "${pkgdir}/usr/lib/gc2607-camera/scripts/"
 

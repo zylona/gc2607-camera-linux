@@ -38,6 +38,8 @@ Environment:
   GC2607_VCAM_FRAMERATE      output framerate, default: 30/1
   GC2607_VCAM_FORMAT         output format, default: YUY2
   GC2607_VCAM_SINK_SYNC      pace output timestamps, default: true
+  GC2607_VCAM_IDLE_GRACE     seconds without a consumer before relayd restart, default: 2
+  GC2607_VCAM_IDLE_POLL_INTERVAL  consumer poll interval, default: 0.5
   GC2607_VCAM_MAX_RUNTIME    optional systemd RuntimeMaxSec, for example 90min
   GC2607_RAW_DEVICE          raw IPU6 capture node to check, default: /dev/video0
   GC2607_RELAYD_DEBUG        set to enable relayd -d debug logging
@@ -155,6 +157,8 @@ add_common_systemd_env() {
         GC2607_VCAM_FRAMERATE \
         GC2607_VCAM_FORMAT \
         GC2607_VCAM_SPLASHSRC \
+        GC2607_VCAM_IDLE_GRACE \
+        GC2607_VCAM_IDLE_POLL_INTERVAL \
         GC2607_VCAM_MAX_RUNTIME; do
         if [[ -n "${!var+x}" ]]; then
             out+=(--setenv="$var=${!var}")
@@ -247,7 +251,7 @@ start_engine() {
         args+=(--property="RuntimeMaxSec=$GC2607_VCAM_MAX_RUNTIME")
     fi
 
-    systemd-run "${args[@]}" "$ROOT/scripts/run-virtual-camera-feeder.sh"
+    systemd-run "${args[@]}" "$ROOT/scripts/run-virtual-camera-supervisor.sh"
     echo "Virtual camera engine started for $DEVICE."
     echo "Select '$LABEL' in the app; the real camera powers on only while the virtual device is open."
 }
@@ -304,7 +308,7 @@ run_foreground() {
     register_pipewire_source || true
     release_raw_camera || true
     export GC2607_VCAM_DEVICE="$DEVICE"
-    exec "$ROOT/scripts/run-virtual-camera-feeder.sh"
+    exec "$ROOT/scripts/run-virtual-camera-supervisor.sh"
 }
 
 unload_loopback() {

@@ -221,7 +221,11 @@ sudo depmod -a "$KERNEL"
 sudo udevadm control --reload-rules
 sudo udevadm settle || true
 systemctl --user daemon-reload
-systemctl --user enable gc2607-camera.service 2>/dev/null || true
+if systemctl --user is-active --quiet gc2607-camera.service; then
+    systemctl --user restart gc2607-camera.service
+else
+    systemctl --user enable gc2607-camera.service 2>/dev/null || true
+fi
 
 printf '\nInstallation completed.\n'
 printf '  Source ref: %s\n' "$REF"
