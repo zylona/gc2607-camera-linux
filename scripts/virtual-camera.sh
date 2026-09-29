@@ -3,7 +3,10 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-UNIT_NAME="${GC2607_VCAM_UNIT_NAME:-gc2607-virtual-camera}"
+# Keep this in sync with install-virtual-camera-service.sh and the packaged
+# gc2607-camera.service.  The old gc2607-virtual-camera name was used by an
+# earlier version and made `status` inspect the wrong unit.
+UNIT_NAME="${GC2607_VCAM_UNIT_NAME:-gc2607-camera}"
 UNIT="${UNIT_NAME}.service"
 VIDEO_NR="${GC2607_VCAM_VIDEO_NR:-60}"
 DEVICE="${GC2607_VCAM_DEVICE:-/dev/video${VIDEO_NR}}"
