@@ -21,7 +21,9 @@ the install command can become `yay -S gc2607-camera`.
 ## Before publishing
 
 - The source repository is `https://github.com/zylona/gc2607-camera-linux`.
-- Commit the validated local changes and create a release tag.
+- Commit the validated local changes. A release tag is optional for the current
+  `-git` packages; it becomes useful later if we publish fixed, non-VCS package
+  names.
 - Remove build output such as `src/`, `pkg/`, and `*.pkg.tar.zst` from the Git
   repository.
 - The maintainer has confirmed that the `assets/hal/*.aiqb` and related tuning
@@ -42,6 +44,9 @@ Do not upload the generated binary package to the AUR. Upload `PKGBUILD`,
 `.SRCINFO`, `LICENSE`, and any required `.install` or patch files.
 
 ## AUR account setup
+
+As of 2026-09-29, new AUR account registration is temporarily paused by the
+AUR administrators. Do not automate retries; wait for registration to reopen.
 
 Create an AUR account and add a dedicated SSH public key. The local SSH config
 can use:
