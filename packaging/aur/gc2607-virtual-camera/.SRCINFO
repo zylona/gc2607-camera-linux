@@ -1,6 +1,6 @@
 pkgbase = gc2607-virtual-camera-git
 	pkgdesc = GC2607 on-demand virtual webcam (v4l2-relayd) and system camera config
-	pkgver = r56.g0b32fab
+	pkgver = r60.gf46a1f1
 	pkgrel = 1
 	url = https://github.com/zylona/gc2607-camera-linux
 	install = gc2607-virtual-camera.install
