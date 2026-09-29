@@ -24,5 +24,6 @@ Install them into a HAL checkout with:
 scripts/install-hal-assets.sh /path/to/ipu6-camera-hal
 ```
 
-These assets came from the Windows driver payload used during bring-up. Verify redistribution terms
-before publishing this repo publicly.
+These assets came from the Windows driver payload used during bring-up. The
+maintainer has confirmed that they may be redistributed publicly with this
+project.

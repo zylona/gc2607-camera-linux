@@ -120,15 +120,27 @@ yay -S gc2607-camera-git
 ```
 
 The package is planned as an AUR meta package over the DKMS, HAL, and virtual
-camera packages. See [docs/aur-publishing.md](docs/aur-publishing.md). Before
-publishing, verify that the GC2607 AIQB/tuning files may legally be redistributed;
-they originated in a Windows driver payload.
+camera packages. See [docs/aur-publishing.md](docs/aur-publishing.md).
 
-There are two ways to install the stack. The **AUR packages are the recommended
-path on Arch/CachyOS** — they rebuild the kernel modules automatically on every
-kernel upgrade (an out-of-tree module installed by hand is silently lost on the
-next kernel bump). The manual from-source path further down is for development
-or non-Arch systems.
+### GitHub one-command installer
+
+GitHub Releases provide a standalone installer for users who do not want to
+clone the repository or run each build command manually:
+
+```sh
+chmod +x gc2607-camera-installer-v0.1.0.sh
+./gc2607-camera-installer-v0.1.0.sh
+```
+
+The installer checks the hardware, installs official and public AUR
+dependencies, downloads this repository, builds the DKMS/HAL/virtual-camera
+packages in order, and enables the user service. It does not reboot
+automatically. See [docs/github-installer.md](docs/github-installer.md).
+
+There are three ways to install the stack: the GitHub installer, the AUR
+packages, or the manual from-source path. The packaged paths rebuild the
+kernel modules automatically on every kernel upgrade (an out-of-tree module
+installed by hand is silently lost on the next kernel bump).
 
 ### Arch Linux / AUR packages (recommended)
 
@@ -158,9 +170,10 @@ cd gc2607-camera-linux/packaging/aur
 reboot
 ```
 
-The final `gc2607-virtual-camera` package enables `v4l2-relayd.service` and
-brings up the virtual webcam, so after the reboot the whole stack comes up on
-boot with no further steps. Removal is the reverse `pacman -R` (see
+The final `gc2607-virtual-camera` package enables the user-level
+`gc2607-camera.service` and brings up the virtual webcam, so after the reboot
+the whole stack comes up on login with no further steps. Removal is the reverse
+`pacman -R` (see
 `packaging/aur/README.md`).
 
 If you previously installed via the manual `scripts/install-*.sh` path, back it
