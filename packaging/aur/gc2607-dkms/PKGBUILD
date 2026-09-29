@@ -7,7 +7,7 @@
 
 _pkgbase=gc2607
 pkgname=gc2607-dkms-git
-pkgver=0.3.1.r41.g1471d20
+pkgver=0.3.1.r49.gde91308
 pkgrel=1
 pkgdesc="GalaxyCore GC2607 V4L2 sensor kernel module (DKMS)"
 arch=('x86_64')

@@ -1,6 +1,6 @@
 pkgbase = gc2607-camera-git
 	pkgdesc = GC2607 camera stack for Huawei MateBook X Pro 2024 (VGHH-XX)
-	pkgver = r1.g0000000
+	pkgver = r49.gde91308
 	pkgrel = 1
 	url = https://github.com/zylona/gc2607-camera-linux
 	arch = x86_64
