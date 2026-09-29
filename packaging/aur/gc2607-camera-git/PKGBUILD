@@ -1,4 +1,4 @@
-# Maintainer: Zylona <replace-with-your-contact>
+# Maintainer: Zylona <zylooona at gmail dot com>
 #
 # Meta package for the Huawei MateBook X Pro 2024 GC2607 camera stack.
 # The implementation is split into DKMS, HAL, and virtual-camera packages so
@@ -8,7 +8,7 @@ pkgver=r1.g0000000
 pkgrel=1
 pkgdesc="GC2607 camera stack for Huawei MateBook X Pro 2024 (VGHH-XX)"
 arch=('x86_64')
-url="https://github.com/REPLACE_ME/gc2607-camera-linux"
+url="https://github.com/zylona/gc2607-camera-linux"
 license=('0BSD')
 depends=(
   'gc2607-dkms-git'
@@ -26,7 +26,7 @@ depends=(
 makedepends=('git')
 provides=('gc2607-camera')
 conflicts=('gc2607-camera')
-source=("git+https://github.com/REPLACE_ME/gc2607-camera-linux.git")
+source=("git+https://github.com/zylona/gc2607-camera-linux.git")
 sha256sums=('SKIP')
 
 pkgver() {

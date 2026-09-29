@@ -44,7 +44,7 @@ mkdir -p "$(dirname "$UNIT_FILE")"
 install -m 0644 /dev/stdin "$UNIT_FILE" <<EOF
 [Unit]
 Description=GC2607 on-demand virtual camera (v4l2-relayd engine)
-Documentation=https://github.com/AlexDaichendt/gc2607-camera-linux
+Documentation=https://github.com/zylona/gc2607-camera-linux
 # The real sensor and PipeWire registration both need the graphical user
 # session's media stack to be up first.
 After=pipewire.service wireplumber.service

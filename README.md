@@ -145,7 +145,7 @@ paru -S intel-ipu6-camera-bin icamerasrc-git
 Then build the stack in dependency order:
 
 ```sh
-git clone https://github.com/AlexDaichendt/gc2607-camera-linux.git
+git clone git@github.com:zylona/gc2607-camera-linux.git
 cd gc2607-camera-linux/packaging/aur
 
 (cd gc2607-dkms              && makepkg -si)
@@ -204,7 +204,7 @@ third_party/      upstream ipu6-camera-hal and ipu6-drivers, tracked as
 Clone this repo with its third-party source submodules:
 
 ```sh
-git clone --recurse-submodules https://github.com/AlexDaichendt/gc2607-camera-linux
+git clone --recurse-submodules git@github.com:zylona/gc2607-camera-linux.git
 cd gc2607-camera-linux
 ```
 

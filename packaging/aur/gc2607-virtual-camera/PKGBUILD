@@ -1,4 +1,4 @@
-# Maintainer: Zylona <replace-with-your-contact>
+# Maintainer: Zylona <zylooona at gmail dot com>
 # Contributor: Alexander Daichendt <claude at daichendt dot one>
 #
 # On-demand virtual webcam integration for the GC2607 camera stack.
@@ -10,7 +10,7 @@ pkgver=r44.g8a9ba85
 pkgrel=1
 pkgdesc="GC2607 on-demand virtual webcam (v4l2-relayd) and system camera config"
 arch=('any')
-url="https://github.com/AlexDaichendt/gc2607-camera-linux"
+url="https://github.com/zylona/gc2607-camera-linux"
 license=('GPL2')
 depends=(
   'gc2607-dkms'
@@ -31,7 +31,7 @@ makedepends=('git')
 provides=('gc2607-virtual-camera')
 conflicts=('gc2607-virtual-camera')
 install=gc2607-virtual-camera.install
-source=("git+https://github.com/REPLACE_ME/gc2607-camera-linux.git")
+source=("git+https://github.com/zylona/gc2607-camera-linux.git")
 sha256sums=('SKIP')
 
 pkgver() {
@@ -80,7 +80,7 @@ EOF
     "${pkgdir}/usr/lib/systemd/user/gc2607-camera.service" <<'EOF'
 [Unit]
 Description=GC2607 on-demand virtual camera (v4l2-relayd engine)
-Documentation=https://github.com/REPLACE_ME/gc2607-camera-linux
+Documentation=https://github.com/zylona/gc2607-camera-linux
 After=pipewire.service wireplumber.service
 Wants=pipewire.service wireplumber.service
 

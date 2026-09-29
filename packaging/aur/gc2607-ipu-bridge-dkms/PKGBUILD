@@ -1,4 +1,4 @@
-# Maintainer: Zylona <replace-with-your-contact>
+# Maintainer: Zylona <zylooona at gmail dot com>
 # Contributor: Alexander Daichendt <claude at daichendt dot one>
 #
 # DKMS package for a patched ipu-bridge.ko that adds the GC2607 sensor ACPI HID
@@ -13,14 +13,14 @@ pkgver=0.1.0.r41.g1471d20
 pkgrel=1
 pkgdesc="Intel IPU bridge with GC2607 (GCTI2607) sensor-table entry (DKMS)"
 arch=('x86_64')
-url="https://github.com/AlexDaichendt/gc2607-camera-linux"
+url="https://github.com/zylona/gc2607-camera-linux"
 license=('GPL2')
 depends=('dkms')
 makedepends=('git')
 provides=("gc2607-ipu-bridge-dkms=${pkgver}" "${_pkgbase}-dkms=${pkgver}")
 conflicts=('gc2607-ipu-bridge-dkms' "${_pkgbase}-dkms")
 install=gc2607-ipu-bridge-dkms.install
-source=("git+https://github.com/REPLACE_ME/gc2607-camera-linux.git")
+source=("git+https://github.com/zylona/gc2607-camera-linux.git")
 sha256sums=('SKIP')
 
 pkgver() {

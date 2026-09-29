@@ -1,4 +1,4 @@
-# Maintainer: Zylona <replace-with-your-contact>
+# Maintainer: Zylona <zylooona at gmail dot com>
 # Contributor: Alexander Daichendt <claude at daichendt dot one>
 #
 # Intel IPU6 camera HAL (libcamhal) patched for the GalaxyCore GC2607 and
@@ -10,14 +10,14 @@
 # three patches + the tuning assets come from gc2607-camera-linux at HEAD.
 
 _pkgbase=ipu6-camera-hal
-# Pinned to third_party/ipu6-camera-hal in AlexDaichendt/gc2607-camera-linux.
+# Pinned to third_party/ipu6-camera-hal in zylona/gc2607-camera-linux.
 _hal_commit=9899efa70921906ee6dd23c9f83aff343968f164
 pkgname=gc2607-ipu6-camera-hal-git
 pkgver=r46.g5febb72
 pkgrel=1
 pkgdesc="Intel IPU6 camera HAL (libcamhal) patched for the GalaxyCore GC2607"
 arch=('x86_64')
-url="https://github.com/AlexDaichendt/gc2607-camera-linux"
+url="https://github.com/zylona/gc2607-camera-linux"
 license=('Apache')
 # intel-ipu6-camera-bin (AUR) ships the proprietary libia/libipu6 userspace
 # libraries the HAL links against, and transitively pulls intel-ipu6-dkms-git
@@ -27,7 +27,7 @@ makedepends=('git' 'cmake' 'ninja' 'pkgconf')
 provides=("gc2607-ipu6-camera-hal=${pkgver}" "${_pkgbase}=${pkgver}" 'libcamhal')
 conflicts=('gc2607-ipu6-camera-hal' "${_pkgbase}")
 source=(
-  "git+https://github.com/REPLACE_ME/gc2607-camera-linux.git"
+  "git+https://github.com/zylona/gc2607-camera-linux.git"
   "${_pkgbase}::git+https://github.com/intel/ipu6-camera-hal.git#commit=${_hal_commit}"
 )
 sha256sums=('SKIP' 'SKIP')

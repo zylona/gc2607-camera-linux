@@ -51,7 +51,7 @@ Build in dependency order — the kernel modules and the HAL first, then the
 virtual-camera package that ties them together:
 
 ```bash
-git clone https://github.com/AlexDaichendt/gc2607-camera-linux.git
+git clone git@github.com:zylona/gc2607-camera-linux.git
 cd gc2607-camera-linux/packaging/aur
 
 (cd gc2607-dkms              && makepkg -si)

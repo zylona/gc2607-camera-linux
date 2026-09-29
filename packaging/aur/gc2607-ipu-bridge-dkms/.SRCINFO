@@ -2,7 +2,7 @@ pkgbase = gc2607-ipu-bridge-dkms-git
 	pkgdesc = Intel IPU bridge with GC2607 (GCTI2607) sensor-table entry (DKMS)
 	pkgver = 0.1.0.r41.g1471d20
 	pkgrel = 1
-	url = https://github.com/AlexDaichendt/gc2607-camera-linux
+	url = https://github.com/zylona/gc2607-camera-linux
 	install = gc2607-ipu-bridge-dkms.install
 	arch = x86_64
 	license = GPL2
@@ -12,7 +12,7 @@ pkgbase = gc2607-ipu-bridge-dkms-git
 	provides = ipu-bridge-gc2607-dkms=0.1.0.r41.g1471d20
 	conflicts = gc2607-ipu-bridge-dkms
 	conflicts = ipu-bridge-gc2607-dkms
-	source = git+https://github.com/REPLACE_ME/gc2607-camera-linux.git
+	source = git+https://github.com/zylona/gc2607-camera-linux.git
 	sha256sums = SKIP
 
 pkgname = gc2607-ipu-bridge-dkms-git

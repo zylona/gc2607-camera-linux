@@ -20,8 +20,7 @@ the install command can become `yay -S gc2607-camera`.
 
 ## Before publishing
 
-- Create a GitHub repository or fork and replace every `REPLACE_ME` URL in the
-  AUR PKGBUILDs.
+- The source repository is `https://github.com/zylona/gc2607-camera-linux`.
 - Commit the validated local changes and create a release tag.
 - Remove build output such as `src/`, `pkg/`, and `*.pkg.tar.zst` from the Git
   repository.
@@ -70,4 +69,3 @@ the complete stack can be restored with:
 ```bash
 yay -S gc2607-camera-git
 ```
-
