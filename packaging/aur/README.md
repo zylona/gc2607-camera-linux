@@ -69,14 +69,17 @@ whole chain (`yay -S gc2607-camera-git`).
 
 ### What the scriptlets do
 
-`gc2607-virtual-camera`'s `.install` enables `v4l2-relayd.service` and brings up
-the v4l2loopback device, so the camera works after install + reboot with no
-further steps. The DKMS packages `modprobe` their modules on install where
-possible; modules that are already live take effect on the next reboot.
+`gc2607-virtual-camera` installs a user-level `gc2607-camera.service`, enables
+it globally for future graphical sessions, and brings up the v4l2loopback
+device. The package prints the two `systemctl --user` commands needed to
+activate it immediately in an already-running session. The DKMS packages
+`modprobe` their modules on install where possible; modules that are already
+live take effect on the next reboot.
 
-Auto-enabling a service deviates from Arch packaging guidelines — drop the
-`systemctl enable --now` line from `gc2607-virtual-camera.install` if publishing
-to the AUR.
+The global enable is retained for this hardware-specific package so a fresh
+installation can recover the tested behavior after login. If the package is
+submitted to the public AUR, review this choice against current Arch package
+guidelines before publishing.
 
 `makepkg -si` installs via `pacman`, so removal is the reverse:
 
