@@ -130,7 +130,9 @@ PACMAN_FLAGS=(--needed)
 # VCS pkgver() functions otherwise rewrite the local PKGBUILD after each
 # install, leaving a checkout dirty and making the next `git pull` fail.
 # Package versions are updated in the repository when releases are pushed.
-MAKEPKG_FLAGS=(-C -s -i --holdver)
+# Always rebuild: a previous interrupted install may have left a package file
+# behind that was produced from an older PKGBUILD.
+MAKEPKG_FLAGS=(-C -s -i -f --holdver)
 if [[ "$AUTO_CONFIRM" -eq 1 ]]; then
     PACMAN_FLAGS+=(--noconfirm)
     MAKEPKG_FLAGS+=(--noconfirm)
