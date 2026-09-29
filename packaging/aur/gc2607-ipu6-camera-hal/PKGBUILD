@@ -13,7 +13,7 @@ _pkgbase=ipu6-camera-hal
 # Pinned to third_party/ipu6-camera-hal in zylona/gc2607-camera-linux.
 _hal_commit=9899efa70921906ee6dd23c9f83aff343968f164
 pkgname=gc2607-ipu6-camera-hal-git
-pkgver=r54.g7b690a5
+pkgver=r56.g0b32fab
 pkgrel=1
 pkgdesc="Intel IPU6 camera HAL (libcamhal) patched for the GalaxyCore GC2607"
 arch=('x86_64')

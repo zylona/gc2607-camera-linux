@@ -127,7 +127,10 @@ sudo -v
 migrate_legacy_user_unit
 
 PACMAN_FLAGS=(--needed)
-MAKEPKG_FLAGS=(-C -s -i)
+# VCS pkgver() functions otherwise rewrite the local PKGBUILD after each
+# install, leaving a checkout dirty and making the next `git pull` fail.
+# Package versions are updated in the repository when releases are pushed.
+MAKEPKG_FLAGS=(-C -s -i --holdver)
 if [[ "$AUTO_CONFIRM" -eq 1 ]]; then
     PACMAN_FLAGS+=(--noconfirm)
     MAKEPKG_FLAGS+=(--noconfirm)

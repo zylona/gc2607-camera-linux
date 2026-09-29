@@ -6,7 +6,7 @@
 # Ships the tested user-level relayd engine, v4l2loopback configuration, the
 # hardware gate, and desktop camera metadata.
 pkgname=gc2607-virtual-camera-git
-pkgver=r54.g7b690a5
+pkgver=r56.g0b32fab
 pkgrel=1
 pkgdesc="GC2607 on-demand virtual webcam (v4l2-relayd) and system camera config"
 arch=('any')
@@ -53,8 +53,8 @@ package() {
 v4l2loopback
 EOF
 
-  install -Dm644 config/udev/rules.d/70-ipu6-psys.rules \
-    "${pkgdir}/usr/lib/udev/rules.d/70-ipu6-psys.rules"
+  # icamerasrc-git already owns the IPU6 PSYS rule. Do not install a second
+  # file at the same path; pacman correctly rejects two packages owning it.
 
   # Desktop integration. This only prioritizes the virtual camera; it does not
   # globally disable unrelated IPU6 or libcamera nodes.

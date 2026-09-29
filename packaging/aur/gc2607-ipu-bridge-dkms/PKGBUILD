@@ -9,7 +9,7 @@
 
 _pkgbase=ipu-bridge-gc2607
 pkgname=gc2607-ipu-bridge-dkms-git
-pkgver=0.1.0.r54.g7b690a5
+pkgver=0.1.0.r56.g0b32fab
 pkgrel=1
 pkgdesc="Intel IPU bridge with GC2607 (GCTI2607) sensor-table entry (DKMS)"
 arch=('x86_64')
