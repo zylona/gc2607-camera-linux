@@ -24,9 +24,9 @@ the install command can become `yay -S gc2607-camera`.
 - Commit the validated local changes and create a release tag.
 - Remove build output such as `src/`, `pkg/`, and `*.pkg.tar.zst` from the Git
   repository.
-- Confirm the redistribution terms for `assets/hal/*.aiqb` and the related
-  tuning files. These came from a Windows driver payload and must not be
-  published to the AUR without permission.
+- The maintainer has confirmed that the `assets/hal/*.aiqb` and related tuning
+  files may be redistributed publicly. These came from a Windows driver payload
+  and the confirmation should remain documented in `CREDITS.md`.
 - Verify every package in a clean Arch build environment.
 
 ## Local package checks

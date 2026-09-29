@@ -26,4 +26,5 @@ https://github.com/intel/ipu6-drivers
 ```
 
 The GC2607 AIQB/graph assets included in `assets/hal/` came from the Windows driver payload used
-during bring-up. Verify redistribution terms before publishing this repo publicly.
+during bring-up. The maintainer has confirmed that these assets may be redistributed publicly
+with this project.
