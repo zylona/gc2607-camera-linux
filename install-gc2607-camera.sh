@@ -55,6 +55,29 @@ cleanup() {
 }
 trap cleanup EXIT
 
+migrate_legacy_user_unit() {
+    local user_config user_unit backup_unit
+
+    user_config="${XDG_CONFIG_HOME:-$HOME/.config}"
+    user_unit="$user_config/systemd/user/gc2607-camera.service"
+
+    [[ -f "$user_unit" ]] || return 0
+
+    # A manually installed checkout-level unit takes precedence over the
+    # packaged /usr/lib/systemd/user unit. Keep it only when it already points
+    # at the stable packaged script; otherwise stop it and preserve a backup.
+    if grep -Fq '/usr/lib/gc2607-camera/scripts/virtual-camera.sh' "$user_unit"; then
+        return 0
+    fi
+
+    log "Migrating the legacy checkout-level user service"
+    systemctl --user disable --now gc2607-camera.service 2>/dev/null || true
+    backup_unit="${user_unit}.legacy.$(date +%Y%m%d-%H%M%S)"
+    mv -- "$user_unit" "$backup_unit"
+    systemctl --user daemon-reload
+    printf '    preserved old unit as %s\n' "$backup_unit"
+}
+
 while (($#)); do
     case "$1" in
         --ref)
@@ -101,6 +124,7 @@ else
 fi
 
 sudo -v
+migrate_legacy_user_unit
 
 PACMAN_FLAGS=(--needed)
 MAKEPKG_FLAGS=(-C -s -i)
