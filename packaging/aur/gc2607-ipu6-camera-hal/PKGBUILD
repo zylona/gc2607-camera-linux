@@ -32,13 +32,6 @@ source=(
 )
 sha256sums=('SKIP' 'SKIP')
 
-pkgver() {
-  cd "${srcdir}/gc2607-camera-linux"
-  printf 'r%s.g%s' \
-    "$(git rev-list --count HEAD)" \
-    "$(git rev-parse --short HEAD)"
-}
-
 prepare() {
   local bringup="${srcdir}/gc2607-camera-linux"
   cd "${srcdir}/${_pkgbase}"

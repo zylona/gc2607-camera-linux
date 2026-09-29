@@ -131,8 +131,9 @@ PACMAN_FLAGS=(--needed)
 # install, leaving a checkout dirty and making the next `git pull` fail.
 # Package versions are updated in the repository when releases are pushed.
 # Always rebuild: a previous interrupted install may have left a package file
-# behind that was produced from an older PKGBUILD.
-MAKEPKG_FLAGS=(-C -s -i -f --holdver)
+# behind that was produced from an older PKGBUILD. VCS sources must be allowed
+# to update, so do not pass makepkg's --holdver option.
+MAKEPKG_FLAGS=(-C -s -i -f)
 if [[ "$AUTO_CONFIRM" -eq 1 ]]; then
     PACMAN_FLAGS+=(--noconfirm)
     MAKEPKG_FLAGS+=(--noconfirm)
