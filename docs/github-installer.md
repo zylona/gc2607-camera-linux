@@ -10,9 +10,9 @@ Download the installer and its checksum from a GitHub Release, verify it, and
 run it as a normal user:
 
 ```bash
-sha256sum -c gc2607-camera-installer-v0.1.0.sh.sha256
-chmod +x gc2607-camera-installer-v0.1.0.sh
-./gc2607-camera-installer-v0.1.0.sh
+sha256sum -c gc2607-camera-installer-v0.1.1.sh.sha256
+chmod +x gc2607-camera-installer-v0.1.1.sh
+./gc2607-camera-installer-v0.1.1.sh
 ```
 
 The installer checks the Huawei `VGHH-XX` hardware gate, installs Arch/Omarchy

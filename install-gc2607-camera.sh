@@ -127,12 +127,11 @@ sudo -v
 migrate_legacy_user_unit
 
 PACMAN_FLAGS=(--needed)
-# VCS pkgver() functions otherwise rewrite the local PKGBUILD after each
-# install, leaving a checkout dirty and making the next `git pull` fail.
-# Package versions are updated in the repository when releases are pushed.
-# Always rebuild: a previous interrupted install may have left a package file
-# behind that was produced from an older PKGBUILD. VCS sources must be allowed
-# to update, so do not pass makepkg's --holdver option.
+# Build packages from temporary copies so makepkg's VCS pkgver() updates never
+# rewrite the user's checkout. Always rebuild: a previous interrupted install
+# may have left a package file behind that was produced from an older PKGBUILD.
+# VCS sources must be allowed to update, so do not pass makepkg's --holdver
+# option.
 MAKEPKG_FLAGS=(-C -s -i -f)
 if [[ "$AUTO_CONFIRM" -eq 1 ]]; then
     PACMAN_FLAGS+=(--noconfirm)
@@ -199,14 +198,20 @@ PACKAGING_ROOT="$SOURCE_ROOT/packaging/aur"
 [[ -d "$PACKAGING_ROOT" ]] || die "packaging/aur not found in $SOURCE_ROOT"
 
 build_package() {
-    local directory="$1"
+    local directory="$1" build_root
     [[ -f "$PACKAGING_ROOT/$directory/PKGBUILD" ]] ||
         die "missing PKGBUILD: $PACKAGING_ROOT/$directory"
     log "Building and installing $directory"
-    (
-        cd "$PACKAGING_ROOT/$directory"
+    build_root="$(mktemp -d -t gc2607-package.XXXXXX)"
+    cp -a "$PACKAGING_ROOT/$directory/." "$build_root/"
+    if ! (
+        cd "$build_root"
         makepkg "${MAKEPKG_FLAGS[@]}"
-    )
+    ); then
+        rm -rf -- "$build_root"
+        return 1
+    fi
+    rm -rf -- "$build_root"
 }
 
 # Keep this order explicit: the HAL needs Intel userspace libraries at build

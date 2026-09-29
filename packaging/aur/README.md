@@ -30,7 +30,9 @@ module installed by hand is silently lost on the next kernel bump.
 > They are VCS (`-git`) packages: they build from the latest `main` (the Intel
 > HAL submodule is pinned to a validated commit inside the PKGBUILD), and
 > `pkgver()` derives a version like `0.3.1.r42.gdeadbee` from the commit count
-> and hash.
+> and hash. The top-level GitHub installer builds temporary copies of these
+> package directories, so makepkg can update `pkgver` without dirtying a user's
+> source checkout.
 
 ## Prerequisites
 

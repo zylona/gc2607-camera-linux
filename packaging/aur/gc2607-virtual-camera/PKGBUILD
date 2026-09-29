@@ -34,6 +34,13 @@ install=gc2607-virtual-camera.install
 source=("git+https://github.com/zylona/gc2607-camera-linux.git")
 sha256sums=('SKIP')
 
+pkgver() {
+  cd "${srcdir}/gc2607-camera-linux"
+  printf 'r%s.g%s' \
+    "$(git rev-list --count HEAD)" \
+    "$(git rev-parse --short HEAD)"
+}
+
 package() {
   cd "${srcdir}/gc2607-camera-linux"
 

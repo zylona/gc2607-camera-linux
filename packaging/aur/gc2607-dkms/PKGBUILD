@@ -21,6 +21,14 @@ install=gc2607-dkms.install
 source=("git+https://github.com/zylona/gc2607-camera-linux.git")
 sha256sums=('SKIP')
 
+pkgver() {
+  cd "${srcdir}/gc2607-camera-linux"
+  printf '%s.r%s.g%s' \
+    "$(sed -n 's/^PACKAGE_VERSION="\(.*\)"/\1/p' gc2607-kernel/dkms.conf)" \
+    "$(git rev-list --count HEAD)" \
+    "$(git rev-parse --short HEAD)"
+}
+
 package() {
   cd "${srcdir}/gc2607-camera-linux"
   local dest="${pkgdir}/usr/src/${_pkgbase}-${pkgver}"
