@@ -1,0 +1,73 @@
+# AUR publishing plan
+
+This repository is the maintained source project for the Huawei MateBook X Pro
+2024 GC2607 camera stack. The AUR repositories should contain only packaging
+metadata and helper files; they should fetch this repository as their source.
+
+## Package layout
+
+Publish these package bases in this order:
+
+1. `gc2607-dkms-git`
+2. `gc2607-ipu-bridge-dkms-git`
+3. `gc2607-ipu6-camera-hal-git`
+4. `gc2607-virtual-camera-git`
+5. `gc2607-camera-git`
+
+The fifth package is the user-facing meta package. Once a tagged, fixed source
+release exists, the package names can be changed from `-git` to stable names and
+the install command can become `yay -S gc2607-camera`.
+
+## Before publishing
+
+- Create a GitHub repository or fork and replace every `REPLACE_ME` URL in the
+  AUR PKGBUILDs.
+- Commit the validated local changes and create a release tag.
+- Remove build output such as `src/`, `pkg/`, and `*.pkg.tar.zst` from the Git
+  repository.
+- Confirm the redistribution terms for `assets/hal/*.aiqb` and the related
+  tuning files. These came from a Windows driver payload and must not be
+  published to the AUR without permission.
+- Verify every package in a clean Arch build environment.
+
+## Local package checks
+
+From each package directory:
+
+```bash
+makepkg -Cfs
+makepkg --printsrcinfo > .SRCINFO
+```
+
+Do not upload the generated binary package to the AUR. Upload `PKGBUILD`,
+`.SRCINFO`, `LICENSE`, and any required `.install` or patch files.
+
+## AUR account setup
+
+Create an AUR account and add a dedicated SSH public key. The local SSH config
+can use:
+
+```sshconfig
+Host aur.archlinux.org
+    User aur
+    IdentityFile ~/.ssh/aur
+```
+
+Generate the metadata and push each package base to its own AUR Git repository:
+
+```bash
+git clone ssh://aur@aur.archlinux.org/gc2607-camera-git.git
+cd gc2607-camera-git
+cp /path/to/PKGBUILD /path/to/.SRCINFO .
+git add PKGBUILD .SRCINFO LICENSE
+git commit -m "Initial AUR package"
+git push origin master
+```
+
+Repeat for the four component packages before pushing the meta package. Then
+the complete stack can be restored with:
+
+```bash
+yay -S gc2607-camera-git
+```
+

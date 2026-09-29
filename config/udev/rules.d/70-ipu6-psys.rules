@@ -1,0 +1,3 @@
+# Allow the camera HAL to submit image-processing jobs to IPU6 PSYS.
+# The rule is inert on systems that do not expose /dev/ipu-psys0.
+KERNEL=="ipu-psys0", GROUP="video", MODE="0660"

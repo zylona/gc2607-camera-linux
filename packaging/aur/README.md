@@ -1,5 +1,9 @@
 # AUR packaging
 
+This is the Arch packaging layer for the maintained MateBook X Pro 2024
+GC2607 camera project. The source project lives in GitHub; the AUR repositories
+contain the individual `PKGBUILD` files and package metadata.
+
 Arch Linux packages for the full GC2607 camera stack, an alternative to running
 the `scripts/install-*.sh` steps by hand. Each package mirrors one stage of the
 manual bring-up:
@@ -10,6 +14,7 @@ manual bring-up:
 | [`gc2607-ipu-bridge-dkms`](gc2607-ipu-bridge-dkms/) | patched `ipu-bridge.ko` (adds the GC2607 sensor-table entry + mount quirk) | DKMS |
 | [`gc2607-ipu6-camera-hal`](gc2607-ipu6-camera-hal/) | IPU6 HAL (libcamhal) patched for GC2607 + tuning assets | cmake → `/usr` |
 | [`gc2607-virtual-camera`](gc2607-virtual-camera/) | v4l2-relayd virtual webcam + system camera config | files only |
+| [`gc2607-camera-git`](gc2607-camera-git/) | User-facing meta package for the complete stack | dependencies only |
 
 The IPU6 PSYS module (`/dev/ipu-psys0`) is not packaged here: it is pulled in
 transitively as `intel-ipu6-dkms-git`, a dependency of the `intel-ipu6-camera-bin`
@@ -20,7 +25,8 @@ The two DKMS packages rebuild automatically on every kernel upgrade (via the
 `dkms` pacman hook), which is the whole reason for packaging: an out-of-tree
 module installed by hand is silently lost on the next kernel bump.
 
-> These are **not on the AUR yet** — build them from a checkout of this repo.
+> These are **not on the AUR yet** — build them from a checkout of this repo or
+> publish them using [docs/aur-publishing.md](../docs/aur-publishing.md).
 > They are VCS (`-git`) packages: they build from the latest `main` (the Intel
 > HAL submodule is pinned to a validated commit inside the PKGBUILD), and
 > `pkgver()` derives a version like `0.3.1.r42.gdeadbee` from the commit count
@@ -58,8 +64,8 @@ cd gc2607-camera-linux/packaging/aur
 reboot
 ```
 
-With an AUR helper and these published, the last package alone would pull the
-whole chain (`paru -S gc2607-virtual-camera`).
+With an AUR helper and these published, the meta package alone would pull the
+whole chain (`yay -S gc2607-camera-git`).
 
 ### What the scriptlets do
 

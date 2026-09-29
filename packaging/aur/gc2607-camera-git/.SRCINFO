@@ -1,0 +1,25 @@
+pkgbase = gc2607-camera-git
+	pkgdesc = GC2607 camera stack for Huawei MateBook X Pro 2024 (VGHH-XX)
+	pkgver = r1.g0000000
+	pkgrel = 1
+	url = https://github.com/REPLACE_ME/gc2607-camera-linux
+	arch = x86_64
+	license = 0BSD
+	makedepends = git
+	depends = gc2607-dkms-git
+	depends = gc2607-ipu-bridge-dkms-git
+	depends = gc2607-ipu6-camera-hal-git
+	depends = gc2607-virtual-camera-git
+	depends = intel-ipu6-camera-bin
+	depends = icamerasrc-git
+	depends = v4l2-relayd
+	depends = v4l2loopback-dkms
+	depends = gstreamer
+	depends = gst-plugins-base
+	depends = gst-plugins-good
+	provides = gc2607-camera
+	conflicts = gc2607-camera
+	source = git+https://github.com/REPLACE_ME/gc2607-camera-linux.git
+	sha256sums = SKIP
+
+pkgname = gc2607-camera-git

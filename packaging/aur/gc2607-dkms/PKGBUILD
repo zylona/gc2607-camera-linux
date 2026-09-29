@@ -1,4 +1,5 @@
-# Maintainer: Alexander Daichendt <claude@daichendt.one>
+# Maintainer: Zylona <replace-with-your-contact>
+# Contributor: Alexander Daichendt <claude at daichendt dot one>
 #
 # DKMS package for the GC2607 V4L2 sensor module (binds to ACPI HID GCTI2607
 # and registers the v4l2_subdev the IPU6 stack captures from). Rebuilt
@@ -17,7 +18,7 @@ makedepends=('git')
 provides=("${_pkgbase}-dkms=${pkgver}")
 conflicts=("${_pkgbase}-dkms")
 install=gc2607-dkms.install
-source=("git+https://github.com/AlexDaichendt/gc2607-camera-linux.git")
+source=("git+https://github.com/REPLACE_ME/gc2607-camera-linux.git")
 sha256sums=('SKIP')
 
 pkgver() {

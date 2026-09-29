@@ -1,13 +1,10 @@
-# Maintainer: Alexander Daichendt <claude@daichendt.one>
+# Maintainer: Zylona <replace-with-your-contact>
+# Contributor: Alexander Daichendt <claude at daichendt dot one>
 #
-# Top of the GC2607 camera stack: the on-demand virtual webcam integration plus
-# system config that ties everything together. Depends on the rest of the
-# stack, so installing this (with an AUR helper) pulls the whole chain.
+# On-demand virtual webcam integration for the GC2607 camera stack.
 #
-# Ships:
-#   - /etc/v4l2-relayd.d/gc2607.conf      relayd instance (icamerasrc -> loopback)
-#   - v4l2loopback modprobe options + autoload (the "GC2607 Virtual Camera" node)
-#   - system-wide WirePlumber rules (hide raw IPU6/libcamera, prefer the vcam)
+# Ships the tested user-level relayd engine, v4l2loopback configuration, the
+# hardware gate, and desktop camera metadata.
 pkgname=gc2607-virtual-camera-git
 pkgver=r44.g8a9ba85
 pkgrel=1
@@ -34,8 +31,7 @@ makedepends=('git')
 provides=('gc2607-virtual-camera')
 conflicts=('gc2607-virtual-camera')
 install=gc2607-virtual-camera.install
-backup=('etc/v4l2-relayd.d/gc2607.conf')
-source=("git+https://github.com/AlexDaichendt/gc2607-camera-linux.git")
+source=("git+https://github.com/REPLACE_ME/gc2607-camera-linux.git")
 sha256sums=('SKIP')
 
 pkgver() {
@@ -48,12 +44,6 @@ pkgver() {
 package() {
   cd "${srcdir}/gc2607-camera-linux"
 
-  # relayd instance config. Must live in /etc/v4l2-relayd.d so the v4l2-relayd
-  # systemd generator picks it up and creates v4l2-relayd@gc2607. Marked as a
-  # backup file so local pipeline tweaks survive upgrades.
-  install -Dm644 config/v4l2-relayd.conf \
-    "${pkgdir}/etc/v4l2-relayd.d/gc2607.conf"
-
   # v4l2loopback: autoload at boot + the GC2607-labelled device options.
   install -Dm644 config/modprobe.d/gc2607-v4l2loopback.conf \
     "${pkgdir}/usr/lib/modprobe.d/gc2607-v4l2loopback.conf"
@@ -63,8 +53,45 @@ package() {
 v4l2loopback
 EOF
 
-  # Desktop integration, system-wide (per-user equivalent:
-  # scripts/install-virtual-camera-desktop.sh).
+  install -Dm644 config/udev/rules.d/70-ipu6-psys.rules \
+    "${pkgdir}/usr/lib/udev/rules.d/70-ipu6-psys.rules"
+
+  # Desktop integration. This only prioritizes the virtual camera; it does not
+  # globally disable unrelated IPU6 or libcamera nodes.
   install -Dm644 config/wireplumber/50-gc2607-virtual-camera.conf \
     "${pkgdir}/usr/share/wireplumber/wireplumber.conf.d/50-gc2607-virtual-camera.conf"
+
+  # Install the tested scripts under a stable prefix. Keeping the scripts
+  # together preserves their ROOT-relative lookups after the source checkout
+  # is gone.
+  install -dm755 "${pkgdir}/usr/lib/gc2607-camera/scripts"
+  install -m755 \
+    scripts/check-gc2607-hardware.sh \
+    scripts/run-virtual-camera-feeder.sh \
+    scripts/virtual-camera.sh \
+    "${pkgdir}/usr/lib/gc2607-camera/scripts/"
+
+  install -Dm755 /dev/stdin "${pkgdir}/usr/bin/gc2607-camera" <<'EOF'
+#!/usr/bin/env bash
+exec /usr/lib/gc2607-camera/scripts/virtual-camera.sh "$@"
+EOF
+
+  install -Dm644 /dev/stdin \
+    "${pkgdir}/usr/lib/systemd/user/gc2607-camera.service" <<'EOF'
+[Unit]
+Description=GC2607 on-demand virtual camera (v4l2-relayd engine)
+Documentation=https://github.com/REPLACE_ME/gc2607-camera-linux
+After=pipewire.service wireplumber.service
+Wants=pipewire.service wireplumber.service
+
+[Service]
+Type=simple
+ExecCondition=/usr/bin/bash /usr/lib/gc2607-camera/scripts/check-gc2607-hardware.sh
+ExecStart=/usr/lib/gc2607-camera/scripts/virtual-camera.sh run
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
+EOF
 }

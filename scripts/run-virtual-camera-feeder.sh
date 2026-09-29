@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PREFIX="${GC2607_PREFIX:-$HOME/opt/gc2607-ipu6}"
 DEVICE="${GC2607_VCAM_DEVICE:-/dev/video${GC2607_VCAM_VIDEO_NR:-60}}"
+
+"$ROOT/scripts/check-gc2607-hardware.sh"
 
 SOURCE_WIDTH="${GC2607_VCAM_SOURCE_WIDTH:-1920}"
 SOURCE_HEIGHT="${GC2607_VCAM_SOURCE_HEIGHT:-1080}"
@@ -17,8 +20,8 @@ FLIP_METHOD="${GC2607_FLIP_METHOD:-rotate-180}"
 # fixed manual exposure by default so the picture stays steady. Override any of
 # these via the environment; set GC2607_AE_MODE=auto to restore auto-exposure.
 AE_MODE="${GC2607_AE_MODE:-manual}"
-EXPOSURE_TIME="${GC2607_EXPOSURE_TIME:-22000}"   # microseconds (0-1000000)
-GAIN="${GC2607_GAIN:-10}"                        # dB (0-100), manual AE only
+EXPOSURE_TIME="${GC2607_EXPOSURE_TIME:-30000}"   # microseconds (0-1000000)
+GAIN="${GC2607_GAIN:-24}"                        # dB (0-100), manual AE only
 
 AE_PROPS="ae-mode=$AE_MODE"
 if [[ "$AE_MODE" == "manual" ]]; then
@@ -30,11 +33,6 @@ RELAYD="${GC2607_RELAYD_BIN:-/usr/bin/v4l2-relayd}"
 if ! command -v "$RELAYD" >/dev/null 2>&1 && [[ ! -x "$RELAYD" ]]; then
     echo "Missing v4l2-relayd binary: $RELAYD" >&2
     echo "Install it first (e.g. paru -S v4l2-relayd)." >&2
-    exit 1
-fi
-
-if [[ ! -d "$PREFIX" ]]; then
-    echo "Missing HAL prefix: $PREFIX" >&2
     exit 1
 fi
 
@@ -50,12 +48,16 @@ if [[ ! -w "$DEVICE" ]]; then
     exit 1
 fi
 
-# Prefix-specific GStreamer wiring. These three lines are the only thing that
-# ties relayd to the in-tree $HOME HAL build; a packaged /usr install drops them
-# because ld.so, pkg-config, and GStreamer all auto-discover /usr.
-export LD_LIBRARY_PATH="$PREFIX/lib:$PREFIX/lib/libcamhal/plugins:${LD_LIBRARY_PATH:-}"
-export GST_PLUGIN_PATH="$PREFIX/lib/gstreamer-1.0${GST_PLUGIN_PATH:+:$GST_PLUGIN_PATH}"
-export GST_REGISTRY="${GST_REGISTRY:-$PREFIX/gstreamer-registry.bin}"
+# Prefix-specific GStreamer wiring is needed only for an in-tree HAL build.
+# A packaged HAL under /usr is discovered by ld.so and GStreamer normally.
+if [[ -d "$PREFIX" ]]; then
+    export LD_LIBRARY_PATH="$PREFIX/lib:$PREFIX/lib/libcamhal/plugins:${LD_LIBRARY_PATH:-}"
+    export GST_PLUGIN_PATH="$PREFIX/lib/gstreamer-1.0${GST_PLUGIN_PATH:+:$GST_PLUGIN_PATH}"
+    export GST_REGISTRY="${GST_REGISTRY:-$PREFIX/gstreamer-registry.bin}"
+elif [[ ! -e /usr/lib/libcamhal.so && ! -e /usr/lib/libcamhal.so.0 ]]; then
+    echo "Missing packaged HAL under /usr and development HAL prefix: $PREFIX" >&2
+    exit 1
+fi
 
 OUTPUT_CAPS="video/x-raw,format=${FORMAT},width=${OUTPUT_WIDTH},height=${OUTPUT_HEIGHT},framerate=${FRAMERATE}"
 

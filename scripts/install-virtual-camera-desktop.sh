@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+"$ROOT/scripts/check-gc2607-hardware.sh"
+
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/wireplumber/wireplumber.conf.d"
 CONFIG_FILE="$CONFIG_DIR/50-gc2607-virtual-camera.conf"
 BACKUP_FILE="$CONFIG_FILE.bak"
@@ -13,47 +16,7 @@ trap 'rm -f "$tmp"' EXIT
 cat >"$tmp" <<'EOF'
 # GC2607 virtual-camera desktop integration.
 #
-# The calibrated Intel HAL path is exported as a v4l2loopback webcam. Hide the
-# raw IPU6 V4L2 nodes and the uncalibrated libcamera GC2607 source from
-# WirePlumber so chat apps pick the virtual camera and do not keep /dev/video0
-# busy.
-
-wireplumber.profiles = {
-  main = {
-    monitor.libcamera = disabled
-  }
-}
-
-monitor.libcamera.rules = [
-  {
-    matches = [
-      {
-        device.product.name = "gc2607"
-      }
-    ]
-    actions = {
-      update-props = {
-        device.disabled = true
-        node.disabled = true
-      }
-    }
-  }
-]
-
 monitor.v4l2.rules = [
-  {
-    matches = [
-      {
-        api.v4l2.cap.driver = "isys"
-      }
-    ]
-    actions = {
-      update-props = {
-        device.disabled = true
-        node.disabled = true
-      }
-    }
-  },
   {
     matches = [
       {

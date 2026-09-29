@@ -43,6 +43,10 @@ Environment:
 EOF
 }
 
+require_gc2607_hardware() {
+    "$ROOT/scripts/check-gc2607-hardware.sh"
+}
+
 video_name() {
     local video="$1"
     local base
@@ -310,14 +314,17 @@ unload_loopback() {
 
 case "${1:-}" in
     prepare)
+        require_gc2607_hardware
         ensure_loopback
         register_pipewire_source
         echo "Virtual camera prepared: $DEVICE ($LABEL)"
         ;;
     register)
+        require_gc2607_hardware
         register_pipewire_source
         ;;
     start)
+        require_gc2607_hardware
         start_engine
         ;;
     stop)
@@ -330,6 +337,7 @@ case "${1:-}" in
         logs
         ;;
     run)
+        require_gc2607_hardware
         run_foreground
         ;;
     unload)

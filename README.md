@@ -109,6 +109,21 @@ The tested system exposes the sensor as `i2c-GCTI2607:00`.
 
 ## Install
 
+This repository is the maintained MateBook X Pro 2024 integration project. It
+is intentionally separate from the original bring-up checkout so the tested
+local adaptations, packaging, and hardware gate can be versioned together.
+
+The target Arch user experience is:
+
+```sh
+yay -S gc2607-camera-git
+```
+
+The package is planned as an AUR meta package over the DKMS, HAL, and virtual
+camera packages. See [docs/aur-publishing.md](docs/aur-publishing.md). Before
+publishing, verify that the GC2607 AIQB/tuning files may legally be redistributed;
+they originated in a Windows driver payload.
+
 There are two ways to install the stack. The **AUR packages are the recommended
 path on Arch/CachyOS** — they rebuild the kernel modules automatically on every
 kernel upgrade (an out-of-tree module installed by hand is silently lost on the

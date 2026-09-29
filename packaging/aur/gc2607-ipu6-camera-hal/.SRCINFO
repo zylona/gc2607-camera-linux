@@ -1,0 +1,26 @@
+pkgbase = gc2607-ipu6-camera-hal-git
+	pkgdesc = Intel IPU6 camera HAL (libcamhal) patched for the GalaxyCore GC2607
+	pkgver = r46.g5febb72
+	pkgrel = 1
+	url = https://github.com/AlexDaichendt/gc2607-camera-linux
+	arch = x86_64
+	license = Apache
+	makedepends = git
+	makedepends = cmake
+	makedepends = ninja
+	makedepends = pkgconf
+	depends = intel-ipu6-camera-bin
+	depends = expat
+	depends = libdrm
+	depends = gcc-libs
+	provides = gc2607-ipu6-camera-hal=r46.g5febb72
+	provides = ipu6-camera-hal=r46.g5febb72
+	provides = libcamhal
+	conflicts = gc2607-ipu6-camera-hal
+	conflicts = ipu6-camera-hal
+	source = git+https://github.com/REPLACE_ME/gc2607-camera-linux.git
+	source = ipu6-camera-hal::git+https://github.com/intel/ipu6-camera-hal.git#commit=9899efa70921906ee6dd23c9f83aff343968f164
+	sha256sums = SKIP
+	sha256sums = SKIP
+
+pkgname = gc2607-ipu6-camera-hal-git

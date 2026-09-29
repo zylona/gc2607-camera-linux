@@ -1,4 +1,5 @@
-# Maintainer: Alexander Daichendt <claude@daichendt.one>
+# Maintainer: Zylona <replace-with-your-contact>
+# Contributor: Alexander Daichendt <claude at daichendt dot one>
 #
 # DKMS package for a patched ipu-bridge.ko that adds the GC2607 sensor ACPI HID
 # (GCTI2607) and the MateBook upside-down-mount DMI quirk. The distro
@@ -19,7 +20,7 @@ makedepends=('git')
 provides=("gc2607-ipu-bridge-dkms=${pkgver}" "${_pkgbase}-dkms=${pkgver}")
 conflicts=('gc2607-ipu-bridge-dkms' "${_pkgbase}-dkms")
 install=gc2607-ipu-bridge-dkms.install
-source=("git+https://github.com/AlexDaichendt/gc2607-camera-linux.git")
+source=("git+https://github.com/REPLACE_ME/gc2607-camera-linux.git")
 sha256sums=('SKIP')
 
 pkgver() {

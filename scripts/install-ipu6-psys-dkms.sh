@@ -7,14 +7,6 @@ IPU6_DRIVERS="${IPU6_DRIVERS:-$ROOT/third_party/ipu6-drivers}"
 DKMS_NAME="${DKMS_NAME:-ipu6-drivers}"
 DKMS_VERSION="${DKMS_VERSION:-0.0.0}"
 DKMS_SOURCE_DIR="/usr/src/${DKMS_NAME}-${DKMS_VERSION}"
-TMP_SOURCE=""
-
-cleanup() {
-    if [[ -n "$TMP_SOURCE" ]]; then
-        rm -rf "$TMP_SOURCE"
-    fi
-}
-trap cleanup EXIT
 
 if [[ ! -f "$IPU6_DRIVERS/dkms.conf" ]]; then
     cat >&2 <<EOF
@@ -31,19 +23,25 @@ if ! command -v dkms >/dev/null 2>&1; then
     exit 1
 fi
 
-prepare_dkms_source() {
+stage_dkms_source() {
+    sudo rm -rf "$DKMS_SOURCE_DIR"
+    sudo install -d -m 0755 "$DKMS_SOURCE_DIR"
+
     if git -C "$IPU6_DRIVERS" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-        TMP_SOURCE="$(mktemp -d)"
-        git -C "$IPU6_DRIVERS" archive --format=tar HEAD | tar -xf - -C "$TMP_SOURCE"
-        printf '%s\n' "$TMP_SOURCE"
+        git -C "$IPU6_DRIVERS" archive --format=tar HEAD \
+            | sudo tar -xf - -C "$DKMS_SOURCE_DIR"
     else
-        printf '%s\n' "$IPU6_DRIVERS"
+        sudo cp -a "$IPU6_DRIVERS/." "$DKMS_SOURCE_DIR/"
     fi
 }
 
+# Keep a persistent DKMS source tree.  Registering a temporary archive can
+# leave /var/lib/dkms/.../source pointing at an empty path after cleanup,
+# breaking future kernel upgrades.
 if [[ ! -f "$DKMS_SOURCE_DIR/dkms.conf" ]]; then
-    dkms_add_source="$(prepare_dkms_source)"
-    sudo dkms add "$dkms_add_source"
+    sudo dkms remove "$DKMS_NAME/$DKMS_VERSION" --all 2>/dev/null || true
+    stage_dkms_source
+    sudo dkms add "$DKMS_SOURCE_DIR"
 fi
 
 sudo dkms build "$DKMS_NAME/$DKMS_VERSION" -k "$KERNEL"

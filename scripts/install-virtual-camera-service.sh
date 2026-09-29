@@ -23,16 +23,11 @@ MAX_BUFFERS="${GC2607_VCAM_MAX_BUFFERS:-2}"
 UNIT_NAME="gc2607-camera"
 UNIT_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user/${UNIT_NAME}.service"
 
-MODULES_LOAD_CONF="/etc/modules-load.d/gc2607-v4l2loopback.conf"
 MODPROBE_CONF="/etc/modprobe.d/gc2607-v4l2loopback.conf"
 
-echo "==> Installing v4l2loopback auto-load drop-ins (sudo)"
+"$ROOT/scripts/check-gc2607-hardware.sh"
 
-sudo install -m 0644 /dev/stdin "$MODULES_LOAD_CONF" <<EOF
-# Auto-load the v4l2loopback module at boot for the GC2607 virtual camera.
-v4l2loopback
-EOF
-echo "    wrote $MODULES_LOAD_CONF"
+echo "==> Installing hardware-scoped v4l2loopback options (sudo)"
 
 sudo install -m 0644 /dev/stdin "$MODPROBE_CONF" <<EOF
 # Options for the GC2607 virtual camera loopback device.
@@ -57,6 +52,7 @@ Wants=pipewire.service wireplumber.service
 
 [Service]
 Type=simple
+ExecCondition=/usr/bin/bash ${ROOT}/scripts/check-gc2607-hardware.sh
 ExecStart=${ROOT}/scripts/virtual-camera.sh run
 Restart=on-failure
 RestartSec=5

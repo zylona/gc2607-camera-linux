@@ -5,6 +5,9 @@ PREFIX="${GC2607_PREFIX:-$HOME/opt/gc2607-ipu6}"
 OUT_PREFIX="${1:-/tmp/gc2607-frame}"
 FRAMES="${2:-30}"
 FLIP_METHOD="${GC2607_FLIP_METHOD:-rotate-180}"
+AE_MODE="${GC2607_AE_MODE:-manual}"
+EXPOSURE_TIME="${GC2607_EXPOSURE_TIME:-30000}"
+GAIN="${GC2607_GAIN:-24}"
 
 # Prefix-specific GStreamer wiring, only needed for an in-tree $HOME HAL build.
 # A packaged /usr install (gc2607-ipu6-camera-hal) needs none of this because
@@ -18,8 +21,13 @@ fi
 
 rm -f "${OUT_PREFIX}"-*.jpg
 
+AE_PROPS=("ae-mode=$AE_MODE")
+if [[ "$AE_MODE" == "manual" ]]; then
+    AE_PROPS+=("exposure-time=$EXPOSURE_TIME" "gain=$GAIN")
+fi
+
 gst-launch-1.0 -e -q \
-    icamerasrc device-name=gc2607-uf num-buffers="$FRAMES" \
+    icamerasrc device-name=gc2607-uf "${AE_PROPS[@]}" num-buffers="$FRAMES" \
     ! "video/x-raw,format=NV12,width=1920,height=1080,framerate=30/1" \
     ! videoflip method="$FLIP_METHOD" \
     ! videoconvert \

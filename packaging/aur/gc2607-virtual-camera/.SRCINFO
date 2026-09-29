@@ -1,0 +1,25 @@
+pkgbase = gc2607-virtual-camera-git
+	pkgdesc = GC2607 on-demand virtual webcam (v4l2-relayd) and system camera config
+	pkgver = r44.g8a9ba85
+	pkgrel = 1
+	url = https://github.com/AlexDaichendt/gc2607-camera-linux
+	install = gc2607-virtual-camera.install
+	arch = any
+	license = GPL2
+	makedepends = git
+	depends = gc2607-dkms
+	depends = gc2607-ipu-bridge-dkms
+	depends = gc2607-ipu6-camera-hal
+	depends = intel-ipu6-dkms-git
+	depends = icamerasrc-git
+	depends = v4l2-relayd
+	depends = v4l2loopback-dkms
+	depends = gstreamer
+	depends = gst-plugins-base
+	depends = gst-plugins-good
+	provides = gc2607-virtual-camera
+	conflicts = gc2607-virtual-camera
+	source = git+https://github.com/REPLACE_ME/gc2607-camera-linux.git
+	sha256sums = SKIP
+
+pkgname = gc2607-virtual-camera-git

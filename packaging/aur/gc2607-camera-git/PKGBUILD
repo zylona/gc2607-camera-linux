@@ -1,0 +1,45 @@
+# Maintainer: Zylona <replace-with-your-contact>
+#
+# Meta package for the Huawei MateBook X Pro 2024 GC2607 camera stack.
+# The implementation is split into DKMS, HAL, and virtual-camera packages so
+# kernel modules are rebuilt locally for the installed kernel.
+pkgname=gc2607-camera-git
+pkgver=r1.g0000000
+pkgrel=1
+pkgdesc="GC2607 camera stack for Huawei MateBook X Pro 2024 (VGHH-XX)"
+arch=('x86_64')
+url="https://github.com/REPLACE_ME/gc2607-camera-linux"
+license=('0BSD')
+depends=(
+  'gc2607-dkms-git'
+  'gc2607-ipu-bridge-dkms-git'
+  'gc2607-ipu6-camera-hal-git'
+  'gc2607-virtual-camera-git'
+  'intel-ipu6-camera-bin'
+  'icamerasrc-git'
+  'v4l2-relayd'
+  'v4l2loopback-dkms'
+  'gstreamer'
+  'gst-plugins-base'
+  'gst-plugins-good'
+)
+makedepends=('git')
+provides=('gc2607-camera')
+conflicts=('gc2607-camera')
+source=("git+https://github.com/REPLACE_ME/gc2607-camera-linux.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "${srcdir}/gc2607-camera-linux"
+  printf 'r%s.g%s' \
+    "$(git rev-list --count HEAD)" \
+    "$(git rev-parse --short HEAD)"
+}
+
+package() {
+  install -dm755 "${pkgdir}/usr/share/doc/${pkgname}"
+  install -Dm644 "${srcdir}/gc2607-camera-linux/docs/current-status.md" \
+    "${pkgdir}/usr/share/doc/${pkgname}/current-status.md"
+  install -Dm644 "${srcdir}/gc2607-camera-linux/CREDITS.md" \
+    "${pkgdir}/usr/share/doc/${pkgname}/CREDITS.md"
+}
