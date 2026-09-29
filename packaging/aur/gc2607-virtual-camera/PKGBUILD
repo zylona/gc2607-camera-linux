@@ -6,7 +6,7 @@
 # Ships the tested user-level relayd engine, v4l2loopback configuration, the
 # hardware gate, and desktop camera metadata.
 pkgname=gc2607-virtual-camera-git
-pkgver=r49.gde91308
+pkgver=r54.g7b690a5
 pkgrel=1
 pkgdesc="GC2607 on-demand virtual webcam (v4l2-relayd) and system camera config"
 arch=('any')
