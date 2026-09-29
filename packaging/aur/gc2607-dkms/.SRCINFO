@@ -1,6 +1,6 @@
 pkgbase = gc2607-dkms-git
 	pkgdesc = GalaxyCore GC2607 V4L2 sensor kernel module (DKMS)
-	pkgver = 0.3.1.r60.gf46a1f1
+	pkgver = 0.3.1.r62.g86406d4
 	pkgrel = 1
 	url = https://github.com/zylona/gc2607-camera-linux
 	install = gc2607-dkms.install
@@ -8,7 +8,7 @@ pkgbase = gc2607-dkms-git
 	license = GPL2
 	makedepends = git
 	depends = dkms
-	provides = gc2607-dkms=0.3.1.r60.gf46a1f1
+	provides = gc2607-dkms=0.3.1.r62.g86406d4
 	conflicts = gc2607-dkms
 	source = git+https://github.com/zylona/gc2607-camera-linux.git
 	sha256sums = SKIP

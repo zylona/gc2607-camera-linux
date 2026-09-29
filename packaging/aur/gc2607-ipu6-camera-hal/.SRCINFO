@@ -1,6 +1,6 @@
 pkgbase = gc2607-ipu6-camera-hal-git
 	pkgdesc = Intel IPU6 camera HAL (libcamhal) patched for the GalaxyCore GC2607
-	pkgver = r60.gf46a1f1
+	pkgver = r62.g86406d4
 	pkgrel = 1
 	url = https://github.com/zylona/gc2607-camera-linux
 	arch = x86_64
@@ -13,8 +13,8 @@ pkgbase = gc2607-ipu6-camera-hal-git
 	depends = expat
 	depends = libdrm
 	depends = gcc-libs
-	provides = gc2607-ipu6-camera-hal=r60.gf46a1f1
-	provides = ipu6-camera-hal=r60.gf46a1f1
+	provides = gc2607-ipu6-camera-hal=r62.g86406d4
+	provides = ipu6-camera-hal=r62.g86406d4
 	provides = libcamhal
 	conflicts = gc2607-ipu6-camera-hal
 	conflicts = ipu6-camera-hal

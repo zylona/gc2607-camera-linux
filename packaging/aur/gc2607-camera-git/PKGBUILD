@@ -4,7 +4,7 @@
 # The implementation is split into DKMS, HAL, and virtual-camera packages so
 # kernel modules are rebuilt locally for the installed kernel.
 pkgname=gc2607-camera-git
-pkgver=r60.gf46a1f1
+pkgver=r62.g86406d4
 pkgrel=1
 pkgdesc="GC2607 camera stack for Huawei MateBook X Pro 2024 (VGHH-XX)"
 arch=('x86_64')
