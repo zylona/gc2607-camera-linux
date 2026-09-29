@@ -60,6 +60,7 @@ elif [[ ! -e /usr/lib/libcamhal.so && ! -e /usr/lib/libcamhal.so.0 ]]; then
 fi
 
 OUTPUT_CAPS="video/x-raw,format=${FORMAT},width=${OUTPUT_WIDTH},height=${OUTPUT_HEIGHT},framerate=${FRAMERATE}"
+SINK_SYNC="${GC2607_VCAM_SINK_SYNC:-true}"
 
 # Input (-i): the real GC2607 source. relayd appends its own appsink, so this
 # ends at a capsfilter producing exactly the output caps. relayd runs this
@@ -77,8 +78,15 @@ INPUT_PIPELINE+=" ! capsfilter caps=${OUTPUT_CAPS}"
 
 # Output (-o): relayd's producer side, held open continuously so the node stays
 # discoverable even while the real camera is idle.
-OUTPUT_PIPELINE="appsrc name=appsrc caps=${OUTPUT_CAPS}"
-OUTPUT_PIPELINE+=" ! videoconvert ! v4l2sink name=v4l2sink device=${DEVICE} sync=false"
+# Keep both appsrc and the downstream queue bounded. If an application opens
+# the loopback slowly (or pauses during camera negotiation), old frames must be
+# dropped instead of accumulating for seconds and then being replayed in a
+# burst. Two frames is enough to absorb normal scheduling jitter at 30 fps.
+OUTPUT_PIPELINE="appsrc name=appsrc is-live=true format=time do-timestamp=true"
+OUTPUT_PIPELINE+=" max-buffers=2 max-bytes=0 max-time=66666666 leaky-type=downstream"
+OUTPUT_PIPELINE+=" caps=${OUTPUT_CAPS}"
+OUTPUT_PIPELINE+=" ! queue max-size-buffers=2 max-size-bytes=0 max-size-time=66666666 leaky=downstream"
+OUTPUT_PIPELINE+=" ! videoconvert ! v4l2sink name=v4l2sink device=${DEVICE} sync=${SINK_SYNC}"
 
 # Splash (-s): the cheap idle image relayd feeds to the loopback when no real
 # camera is running. This is what keeps the device a valid capture node under

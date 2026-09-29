@@ -64,3 +64,10 @@ systemctl --user restart gc2607-camera.service
 
 Automatic exposure remains deferred work. The likely work is in AIQ/AIQD and
 HAL-to-V4L2 control mapping, not merely changing one brightness threshold.
+
+## Virtual-camera buffering
+
+The relay output is deliberately bounded to two frames and paced by the sink.
+If a conferencing application pauses during negotiation, stale frames are
+dropped rather than replayed later at high speed. Set
+`GC2607_VCAM_SINK_SYNC=false` only for debugging or raw throughput tests.

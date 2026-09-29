@@ -37,6 +37,7 @@ Environment:
   GC2607_VCAM_HEIGHT         output height, default: 720
   GC2607_VCAM_FRAMERATE      output framerate, default: 30/1
   GC2607_VCAM_FORMAT         output format, default: YUY2
+  GC2607_VCAM_SINK_SYNC      pace output timestamps, default: true
   GC2607_VCAM_MAX_RUNTIME    optional systemd RuntimeMaxSec, for example 90min
   GC2607_RAW_DEVICE          raw IPU6 capture node to check, default: /dev/video0
   GC2607_RELAYD_DEBUG        set to enable relayd -d debug logging

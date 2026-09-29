@@ -205,6 +205,8 @@ struct gc2607 {
 	struct v4l2_ctrl *pixel_rate;
 	struct v4l2_ctrl *exposure;
 	struct v4l2_ctrl *analogue_gain;
+	struct v4l2_ctrl *digital_gain;
+	struct v4l2_ctrl *gain;
 	struct v4l2_ctrl *hflip;
 	struct v4l2_ctrl *vflip;
 	struct v4l2_ctrl *vblank;
@@ -737,6 +739,17 @@ static int gc2607_s_ctrl(struct v4l2_ctrl *ctrl)
 		break;
 	}
 
+	case V4L2_CID_DIGITAL_GAIN:
+	case V4L2_CID_GAIN:
+		/* The GC2607 has no independent digital-gain path. The IPU6 AIQ
+		 * nevertheless sends a fixed DIGITAL_GAIN=256 every frame, and some
+		 * configurations also send the legacy GAIN control. Accept both so
+		 * the frame-control loop does not fail with EINVAL; analogue gain is
+		 * already applied by the LUT above.
+		 */
+		ret = 0;
+		break;
+
 	case V4L2_CID_HFLIP:
 	case V4L2_CID_VFLIP: {
 		/* Both controls map to the same register; write both bits together.
@@ -938,6 +951,18 @@ static int gc2607_init_controls(struct gc2607 *gc2607)
 						  V4L2_CID_ANALOGUE_GAIN,
 						  GC2607_ANA_GAIN_MIN, GC2607_ANA_GAIN_MAX,
 						  GC2607_ANA_GAIN_STEP, GC2607_ANA_GAIN_DEFAULT);
+
+	/* The CMC fixes digital gain at 1.0x (256 in 1/256 units). Keep the
+	 * control visible and accept the HAL's per-frame write as a no-op. */
+	gc2607->digital_gain = v4l2_ctrl_new_std(hdl, &gc2607_ctrl_ops,
+						 V4L2_CID_DIGITAL_GAIN,
+						 256, 256, 1, 256);
+
+	/* Legacy userspace may probe/write V4L2_CID_GAIN. It has no independent
+	 * hardware mapping here, but a broad range prevents an EINVAL/ERANGE from
+	 * poisoning the HAL control loop. */
+	gc2607->gain = v4l2_ctrl_new_std(hdl, &gc2607_ctrl_ops,
+					 V4L2_CID_GAIN, 0, 65535, 1, 0);
 
 	/* Flip controls: datasheet §6.1, register 0x0101 bits [1:0].
 	 * Changing flip shifts the Bayer first-pixel; get_fmt reflects this.
