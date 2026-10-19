@@ -10,16 +10,21 @@ Download the installer and its checksum from a GitHub Release, verify it, and
 run it as a normal user:
 
 ```bash
-sha256sum -c gc2607-camera-installer-v0.1.1.sh.sha256
-chmod +x gc2607-camera-installer-v0.1.1.sh
-./gc2607-camera-installer-v0.1.1.sh
+sha256sum -c gc2607-camera-installer-v0.1.2.sh.sha256
+chmod +x gc2607-camera-installer-v0.1.2.sh
+./gc2607-camera-installer-v0.1.2.sh
 ```
 
-The installer checks the Huawei `VGHH-XX` hardware gate, installs Arch/Omarchy
-dependencies, installs the public AUR dependencies (`intel-ipu6-camera-bin`,
-`icamerasrc-git`, and the IPU6 DKMS package), downloads this repository, and
-builds the five local packages in dependency order. It never runs as root; it
-uses `sudo` only for system package/module operations.
+The installer checks the Huawei `VGHH-XX` hardware gate and installs the
+Arch/Omarchy dependencies and Intel IPU6 userspace/runtime packages. It then
+builds and installs the GC2607 DKMS modules and GC2607-specific HAL before
+installing `icamerasrc-git`, whose `ipu6-camera-hal` dependency is satisfied by
+the GC2607 provider. If the generic HAL and `icamerasrc-git` are already
+installed, they are removed together immediately before installing the
+replacement HAL, then `icamerasrc-git` is restored. Local packages are built
+without `makepkg -i`; the installer invokes `sudo pacman` from its main shell
+so sudo authentication is reused across the long build and any needed prompt
+remains attached to the visible terminal. It never runs as root.
 
 If neither `yay` nor `paru` is installed, the installer bootstraps `yay` from
 its public AUR Git repository. An AUR account is not required to install an

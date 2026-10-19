@@ -132,7 +132,10 @@ PACMAN_FLAGS=(--needed)
 # may have left a package file behind that was produced from an older PKGBUILD.
 # VCS sources must be allowed to update, so do not pass makepkg's --holdver
 # option.
-MAKEPKG_FLAGS=(-C -s -i -f)
+# 不使用 makepkg -i：它会在构建子进程中另起 sudo pacman，导致恢复入口预先
+# 获取的 sudo 认证不能可靠复用。包构建后由当前主 shell 直接 sudo pacman 安装。
+# 依赖由前置 pacman/AUR 阶段显式安装；构建阶段不再让 makepkg 自己提权。
+MAKEPKG_FLAGS=(-C -f)
 if [[ "$AUTO_CONFIRM" -eq 1 ]]; then
     PACMAN_FLAGS+=(--noconfirm)
     MAKEPKG_FLAGS+=(--noconfirm)
@@ -140,7 +143,7 @@ fi
 
 log "Installing Arch/Omarchy build and runtime dependencies"
 sudo pacman -S "${PACMAN_FLAGS[@]}" \
-    base-devel git cmake ninja dkms v4l-utils \
+    base-devel git cmake ninja pkgconf dkms v4l-utils \
     gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad \
     v4l2-relayd v4l2loopback-dkms
 
@@ -161,12 +164,18 @@ find_aur_helper() {
 
 bootstrap_yay() {
     local yay_root
+    local -a package_files=()
     yay_root="$(mktemp -d -t gc2607-yay.XXXXXX)"
     git clone --depth 1 https://aur.archlinux.org/yay.git "$yay_root/yay"
     (
         cd "$yay_root/yay"
         makepkg "${MAKEPKG_FLAGS[@]}"
     )
+    shopt -s nullglob
+    package_files=("$yay_root/yay"/*.pkg.tar.zst)
+    shopt -u nullglob
+    ((${#package_files[@]} > 0)) || die "makepkg did not create a yay package"
+    sudo pacman -U "${PACMAN_FLAGS[@]}" "${package_files[@]}"
     rm -rf -- "$yay_root"
 }
 
@@ -174,6 +183,7 @@ AUR_HELPER="$(find_aur_helper || true)"
 if [[ -z "$AUR_HELPER" ]]; then
     log "No yay/paru found; bootstrapping yay from the public AUR repository"
     command -v git >/dev/null 2>&1 || die "git is required to bootstrap yay"
+    sudo pacman -S "${PACMAN_FLAGS[@]}" go
     bootstrap_yay
     AUR_HELPER="$(find_aur_helper || true)"
 fi
@@ -181,7 +191,7 @@ fi
 
 log "Installing external Intel IPU6 userspace dependencies"
 "$AUR_HELPER" -S "${PACMAN_FLAGS[@]}" \
-    intel-ipu6-camera-bin icamerasrc-git intel-ipu6-dkms-git
+    intel-ipu6-camera-bin intel-ipu6-dkms-git
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [[ -d "$SCRIPT_DIR/packaging/aur" && -f "$SCRIPT_DIR/README.md" ]]; then
@@ -198,16 +208,45 @@ PACKAGING_ROOT="$SOURCE_ROOT/packaging/aur"
 [[ -d "$PACKAGING_ROOT" ]] || die "packaging/aur not found in $SOURCE_ROOT"
 
 build_package() {
-    local directory="$1" build_root
+    local directory="$1" build_root package
+    local -a package_files=() obsolete_packages=()
     [[ -f "$PACKAGING_ROOT/$directory/PKGBUILD" ]] ||
         die "missing PKGBUILD: $PACKAGING_ROOT/$directory"
-    log "Building and installing $directory"
+    log "Building $directory"
     build_root="$(mktemp -d -t gc2607-package.XXXXXX)"
     cp -a "$PACKAGING_ROOT/$directory/." "$build_root/"
     if ! (
         cd "$build_root"
         makepkg "${MAKEPKG_FLAGS[@]}"
     ); then
+        rm -rf -- "$build_root"
+        return 1
+    fi
+    shopt -s nullglob
+    package_files=("$build_root"/*.pkg.tar.zst)
+    shopt -u nullglob
+    if ((${#package_files[@]} == 0)); then
+        rm -rf -- "$build_root"
+        die "makepkg did not create an installable package: $directory"
+    fi
+
+    if [[ "$directory" == "gc2607-ipu6-camera-hal" ]]; then
+        # icamerasrc-git depends on the generic HAL provider. Remove that
+        # consumer and provider together, then restore the consumer after the
+        # GC2607-specific provider has been installed.
+        for package in icamerasrc-git intel-ipu6-camera-hal-git; do
+            if pacman -Qq "$package" >/dev/null 2>&1; then
+                obsolete_packages+=("$package")
+            fi
+        done
+        if ((${#obsolete_packages[@]} > 0)); then
+            log "Replacing the generic IPU6 HAL with the GC2607-specific provider"
+            sudo pacman -R --noconfirm "${obsolete_packages[@]}"
+        fi
+    fi
+
+    log "Installing built package $directory"
+    if ! sudo pacman -U "${PACMAN_FLAGS[@]}" "${package_files[@]}"; then
         rm -rf -- "$build_root"
         return 1
     fi
@@ -219,6 +258,8 @@ build_package() {
 build_package gc2607-dkms
 build_package gc2607-ipu-bridge-dkms
 build_package gc2607-ipu6-camera-hal
+log "Installing icamerasrc against the GC2607-specific IPU6 HAL"
+"$AUR_HELPER" -S "${PACMAN_FLAGS[@]}" icamerasrc-git
 build_package gc2607-virtual-camera
 build_package gc2607-camera-git
 
