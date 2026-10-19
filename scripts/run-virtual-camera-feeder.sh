@@ -15,11 +15,10 @@ FRAMERATE="${GC2607_VCAM_FRAMERATE:-30/1}"
 FORMAT="${GC2607_VCAM_FORMAT:-YUY2}"
 FLIP_METHOD="${GC2607_FLIP_METHOD:-rotate-180}"
 
-# Exposure control. The IPU6 HAL's auto-exposure hunts (brightness pumps up and
-# down) as the scene changes, e.g. when a face enters the frame. Lock it to a
-# fixed manual exposure by default so the picture stays steady. Override any of
-# these via the environment; set GC2607_AE_MODE=auto to restore auto-exposure.
-AE_MODE="${GC2607_AE_MODE:-manual}"
+# Exposure control. The GC2607 driver now exposes the frame-timing and gain
+# controls required by HAL 3A, so automatic exposure is the default. Manual
+# exposure remains an explicit override for controlled tuning experiments.
+AE_MODE="${GC2607_AE_MODE:-auto}"
 EXPOSURE_TIME="${GC2607_EXPOSURE_TIME:-30000}"   # microseconds (0-1000000)
 GAIN="${GC2607_GAIN:-24}"                        # dB (0-100), manual AE only
 

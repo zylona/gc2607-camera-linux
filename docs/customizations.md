@@ -44,7 +44,10 @@ image rendering most directly.
 
 ## Current exposure behavior
 
-The virtual-camera pipeline currently chooses manual exposure defaults:
+The virtual-camera pipeline defaults to automatic exposure, which follows
+lighting changes and avoids the overexposure seen with the previous fixed
+settings. For controlled experiments only, manual exposure can still be
+selected explicitly:
 
 ```text
 exposure-time=30000 microseconds
@@ -52,13 +55,19 @@ gain=24 dB
 ```
 
 This is a runtime policy in `scripts/run-virtual-camera-feeder.sh`, not a
-replacement for the sensor's factory tuning. It was chosen because the HAL's
-automatic-exposure path still hunts or emits unsupported control writes on this
-hardware. Consequently, a scene can look too bright or too dark when the
-lighting changes. The setting can be overridden for experiments:
+replacement for the sensor's factory tuning. The previous defaults (30 ms and
+24 dB) were too bright on the MateBook under normal indoor lighting. Override
+the mode and values for experiments with the user service environment:
 
 ```bash
-systemctl --user set-environment GC2607_EXPOSURE_TIME=22000 GC2607_GAIN=10
+systemctl --user set-environment GC2607_AE_MODE=manual GC2607_EXPOSURE_TIME=22000 GC2607_GAIN=10
+systemctl --user restart gc2607-camera.service
+```
+
+Return to automatic exposure with:
+
+```bash
+systemctl --user unset-environment GC2607_AE_MODE GC2607_EXPOSURE_TIME GC2607_GAIN
 systemctl --user restart gc2607-camera.service
 ```
 

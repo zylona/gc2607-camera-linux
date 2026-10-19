@@ -13,7 +13,7 @@ elif [[ ! -e /usr/lib/libcamhal.so && ! -e /usr/lib/libcamhal.so.0 ]]; then
     exit 1
 fi
 
-AE_MODE="${GC2607_AE_MODE:-manual}"
+AE_MODE="${GC2607_AE_MODE:-auto}"
 EXPOSURE_TIME="${GC2607_EXPOSURE_TIME:-30000}"
 GAIN="${GC2607_GAIN:-24}"
 AE_PROPS=("ae-mode=$AE_MODE")
