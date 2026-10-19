@@ -17,6 +17,9 @@ have_psys_module()
 sudo install -D -m 0644 \
     "$ROOT/config/udev/rules.d/70-ipu6-psys.rules" \
     /etc/udev/rules.d/70-ipu6-psys.rules
+sudo install -D -m 0644 \
+    "$ROOT/config/udev/rules.d/71-ipu6-psys-uaccess.rules" \
+    /etc/udev/rules.d/71-ipu6-psys-uaccess.rules
 
 if ! have_psys_module; then
     cat >&2 <<EOF
@@ -30,6 +33,7 @@ fi
 
 sudo depmod -a "$KERNEL"
 sudo udevadm control --reload-rules
+sudo udevadm trigger --action=change --sysname-match=ipu-psys0
 
 sudo modprobe intel-ipu6-psys 2>/dev/null ||
     sudo modprobe intel_ipu6_psys 2>/dev/null
@@ -46,5 +50,5 @@ Installed system camera configuration.
 Expected persistent boot pieces:
   gc2607 sensor module loaded and bound to GCTI2607
   Intel IPU6 PSYS module loaded
-  /dev/ipu-psys0 owned by group video
+  /dev/ipu-psys0 owned by group video and granted to the active desktop session
 EOF

@@ -2,6 +2,7 @@ _apply() {
   depmod -a 2>/dev/null || true
   udevadm control --reload-rules 2>/dev/null || true
   udevadm trigger -s misc 2>/dev/null || true
+  udevadm trigger --action=change --sysname-match=ipu-psys0 2>/dev/null || true
 
   # Bring the loopback up now with the packaged options so /dev/video60 exists
   # without a reboot. Harmless if already loaded.

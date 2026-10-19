@@ -10,9 +10,9 @@ Download the installer and its checksum from a GitHub Release, verify it, and
 run it as a normal user:
 
 ```bash
-sha256sum -c gc2607-camera-installer-v0.1.3.sh.sha256
-chmod +x gc2607-camera-installer-v0.1.3.sh
-./gc2607-camera-installer-v0.1.3.sh
+sha256sum -c gc2607-camera-installer-v0.1.4.sh.sha256
+chmod +x gc2607-camera-installer-v0.1.4.sh
+./gc2607-camera-installer-v0.1.4.sh
 ```
 
 The installer checks the Huawei `VGHH-XX` hardware gate and installs the
@@ -20,9 +20,11 @@ Arch/Omarchy dependencies and Intel IPU6 userspace/runtime packages. It then
 builds and installs the GC2607 DKMS modules and GC2607-specific HAL before
 installing `icamerasrc-git`, whose `ipu6-camera-hal` dependency is satisfied by
 the GC2607 provider. If the generic HAL and `icamerasrc-git` are already
-installed, they and the generic HAL debug package are removed immediately
-before installing the replacement HAL, then `icamerasrc-git` is restored. This
-avoids pacman file ownership conflicts from both runtime and debug files.
+installed, pacman replaces the generic runtime provider in the same transaction
+that installs the GC2607-specific provider. The generic HAL debug package is
+removed first to avoid debug-file ownership conflicts. `icamerasrc-git` remains
+installed throughout, so installed GC2607 meta-packages never lose a required
+dependency during the transition.
 Local packages are built
 without `makepkg -i`; the installer invokes `sudo pacman` from its main shell
 so sudo authentication is reused across the long build and any needed prompt
@@ -34,6 +36,11 @@ existing public AUR package.
 
 The installer does not reboot automatically. Reboot after installation so the
 new DKMS modules and the virtual-camera service are loaded cleanly.
+
+The package also installs a udev `uaccess` rule for `/dev/ipu-psys0`. This gives
+the active local desktop session access to IPU6 image processing without
+requiring the user to join the broad `video` group. The installer reloads the
+rule and retriggers the PSYS device so the permission takes effect immediately.
 
 ## Testing the current branch directly
 

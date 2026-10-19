@@ -49,3 +49,20 @@ Reboot persistence was also validated: `/dev/video60` was recreated after
 reboot and the enabled `gc2607-camera.service` restarted `v4l2-relayd`
 automatically. A non-fatal PipeWire registration warning may appear during
 early user-session startup; the V4L2 node remains usable by applications.
+
+## 2026-10-19 MateBook deployment diagnosis
+
+After a fresh deployment, `/dev/ipu-psys0` was present as `root:video` mode
+0660, but the active desktop user was not in the `video` group and the node had
+no user ACL. The camera service consequently logged `Failed to open PSYS,
+error: Permission denied` and served its black fallback stream; a present
+`/dev/video60` and active service did not mean real capture was working. The
+packaged `uaccess` rule now grants the active seat user access without adding
+the user to the broad `video` group.
+
+The v0.1.3 reinstall also exposed a pacman transaction bug: the installer tried
+to remove `icamerasrc-git` while installed GC2607 packages depended on it. The
+installer now removes only the conflicting generic HAL debug package and lets
+pacman replace the generic runtime HAL with the GC2607 provider atomically.
+These fixes are included in v0.1.4; hardware capture must still be re-tested on
+the MateBook after installation.

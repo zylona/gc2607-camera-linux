@@ -231,19 +231,18 @@ build_package() {
     fi
 
     if [[ "$directory" == "gc2607-ipu6-camera-hal" ]]; then
-        # icamerasrc-git depends on the generic HAL provider. Remove that
-        # consumer and provider together, then restore the consumer after the
-        # GC2607-specific provider has been installed.
-        for package in \
-            icamerasrc-git \
-            intel-ipu6-camera-hal-git \
-            intel-ipu6-camera-hal-git-debug; do
+        # The replacement HAL provides the dependency required by icamerasrc.
+        # Let pacman replace the generic runtime provider in the same -U
+        # transaction; removing icamerasrc first breaks installed GC2607
+        # packages that depend on it. Only the debug package has conflicting
+        # files without being replaced by the runtime package transaction.
+        for package in intel-ipu6-camera-hal-git-debug; do
             if pacman -Qq "$package" >/dev/null 2>&1; then
                 obsolete_packages+=("$package")
             fi
         done
         if ((${#obsolete_packages[@]} > 0)); then
-            log "Replacing the generic IPU6 HAL with the GC2607-specific provider"
+            log "Removing the generic IPU6 HAL debug package before provider replacement"
             sudo pacman -R --noconfirm "${obsolete_packages[@]}"
         fi
     fi
@@ -269,6 +268,7 @@ build_package gc2607-camera-git
 log "Refreshing module metadata and the current user service"
 sudo depmod -a "$KERNEL"
 sudo udevadm control --reload-rules
+sudo udevadm trigger --action=change --sysname-match=ipu-psys0
 sudo udevadm settle || true
 systemctl --user daemon-reload
 if systemctl --user is-active --quiet gc2607-camera.service; then

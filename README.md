@@ -128,8 +128,8 @@ GitHub Releases provide a standalone installer for users who do not want to
 clone the repository or run each build command manually:
 
 ```sh
-chmod +x gc2607-camera-installer-v0.1.3.sh
-./gc2607-camera-installer-v0.1.3.sh
+chmod +x gc2607-camera-installer-v0.1.4.sh
+./gc2607-camera-installer-v0.1.4.sh
 ```
 
 The installer checks the hardware, installs official and public AUR

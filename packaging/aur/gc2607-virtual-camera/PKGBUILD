@@ -55,6 +55,8 @@ EOF
 
   # icamerasrc-git already owns the IPU6 PSYS rule. Do not install a second
   # file at the same path; pacman correctly rejects two packages owning it.
+  install -Dm644 "$srcdir/gc2607-camera-linux/config/udev/rules.d/71-ipu6-psys-uaccess.rules" \
+    "$pkgdir/usr/lib/udev/rules.d/71-ipu6-psys-uaccess.rules"
 
   # Desktop integration. This only prioritizes the virtual camera; it does not
   # globally disable unrelated IPU6 or libcamera nodes.

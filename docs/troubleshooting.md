@@ -51,6 +51,27 @@ Expected permissions:
 
 ```text
 root video ... /dev/ipu-psys0
+user:<active-session-user>:rw-  # visible in getfacl output
+```
+
+The active graphical user needs access to this node because `icamerasrc` and
+the virtual-camera service run as that user. The packaged udev rule uses
+`TAG+="uaccess"` to grant access only to the active local session; do not work
+around this by making the node world-writable or by running the camera stack as
+root. Check the effective ACL with:
+
+```sh
+getfacl -p /dev/ipu-psys0
+```
+
+If the active user's ACL is absent after installing the rule, reload and
+retrigger the device, then restart the user service:
+
+```sh
+sudo udevadm control --reload-rules
+sudo udevadm trigger --action=change --sysname-match=ipu-psys0
+udevadm settle
+systemctl --user restart gc2607-camera.service
 ```
 
 ## HAL Assets Are Missing

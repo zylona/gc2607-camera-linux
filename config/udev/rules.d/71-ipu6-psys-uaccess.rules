@@ -1,0 +1,2 @@
+# 让当前活动桌面会话访问 IPU6 PSYS；权限随 logind 会话切换动态管理。
+KERNEL=="ipu-psys0", TAG+="uaccess"
