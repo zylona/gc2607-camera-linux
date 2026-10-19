@@ -234,7 +234,10 @@ build_package() {
         # icamerasrc-git depends on the generic HAL provider. Remove that
         # consumer and provider together, then restore the consumer after the
         # GC2607-specific provider has been installed.
-        for package in icamerasrc-git intel-ipu6-camera-hal-git; do
+        for package in \
+            icamerasrc-git \
+            intel-ipu6-camera-hal-git \
+            intel-ipu6-camera-hal-git-debug; do
             if pacman -Qq "$package" >/dev/null 2>&1; then
                 obsolete_packages+=("$package")
             fi

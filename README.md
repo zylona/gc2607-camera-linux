@@ -128,14 +128,15 @@ GitHub Releases provide a standalone installer for users who do not want to
 clone the repository or run each build command manually:
 
 ```sh
-chmod +x gc2607-camera-installer-v0.1.2.sh
-./gc2607-camera-installer-v0.1.2.sh
+chmod +x gc2607-camera-installer-v0.1.3.sh
+./gc2607-camera-installer-v0.1.3.sh
 ```
 
 The installer checks the hardware, installs official and public AUR
 dependencies, builds packages without nested `makepkg -i` sudo calls, replaces
-the conflicting generic IPU6 HAL with the GC2607-specific provider, and enables
-the user service. It does not reboot automatically. See
+the conflicting generic IPU6 HAL (including its debug package) with the
+GC2607-specific provider, and enables the user service. It does not reboot
+automatically. See
 [docs/github-installer.md](docs/github-installer.md).
 
 There are three ways to install the stack: the GitHub installer, the AUR
